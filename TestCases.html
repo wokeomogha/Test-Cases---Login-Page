@@ -1,0 +1,764 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Login Page – Test Cases</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Mono:wght@400;500&family=Instrument+Sans:wght@400;500;600&display=swap');
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #f4f1ec;
+    --surface: #ffffff;
+    --border: #d6d0c8;
+    --text: #1a1814;
+    --muted: #6b6760;
+    --accent: #2a4a7f;
+    --accent-light: #e8edf5;
+    --danger: #c0392b;
+    --danger-light: #fdf0ef;
+    --success: #1d6b3a;
+    --success-light: #edf7f1;
+    --warning: #8a5c00;
+    --warning-light: #fdf5e6;
+    --font-display: 'DM Serif Display', Georgia, serif;
+    --font-body: 'Instrument Sans', system-ui, sans-serif;
+    --font-mono: 'DM Mono', 'Courier New', monospace;
+    --radius: 6px;
+    --radius-lg: 12px;
+  }
+
+  body {
+    font-family: var(--font-body);
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem 1rem;
+  }
+
+  .page-header {
+    text-align: center;
+    margin-bottom: 2.5rem;
+  }
+
+  .page-header h1 {
+    font-family: var(--font-display);
+    font-size: 2rem;
+    font-weight: 400;
+    letter-spacing: -0.01em;
+    color: var(--text);
+    margin-bottom: 0.3rem;
+  }
+
+  .page-header p {
+    font-size: 0.82rem;
+    color: var(--muted);
+    font-family: var(--font-mono);
+    letter-spacing: 0.04em;
+  }
+
+  .layout {
+    display: grid;
+    grid-template-columns: 1fr 380px;
+    gap: 2.5rem;
+    width: 100%;
+    max-width: 900px;
+    align-items: start;
+  }
+
+  /* --- Test Panel --- */
+  .test-panel {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+  }
+
+  .test-panel-header {
+    padding: 1.1rem 1.3rem 0.9rem;
+    border-bottom: 1px solid var(--border);
+    background: #fafaf8;
+  }
+
+  .test-panel-header h2 {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 0.2rem;
+  }
+
+  .test-panel-header p {
+    font-family: var(--font-display);
+    font-size: 1.1rem;
+    font-weight: 400;
+  }
+
+  .test-tabs {
+    display: flex;
+    border-bottom: 1px solid var(--border);
+    background: #fafaf8;
+  }
+
+  .test-tab {
+    padding: 0.6rem 1.1rem;
+    font-size: 0.78rem;
+    font-family: var(--font-mono);
+    font-weight: 500;
+    color: var(--muted);
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    transition: color 0.15s, border-color 0.15s;
+    background: none;
+    border-left: none;
+    border-right: none;
+    border-top: none;
+    letter-spacing: 0.03em;
+  }
+
+  .test-tab.active {
+    color: var(--accent);
+    border-bottom-color: var(--accent);
+  }
+
+  .test-cases { padding: 1rem 1.3rem 1.3rem; }
+
+  .tc-card {
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    margin-bottom: 0.8rem;
+    overflow: hidden;
+    cursor: pointer;
+    transition: border-color 0.15s;
+  }
+
+  .tc-card:hover { border-color: var(--accent); }
+  .tc-card.active { border-color: var(--accent); }
+
+  .tc-header {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.6rem 0.9rem;
+    background: #fafaf8;
+  }
+
+  .tc-id {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    font-weight: 500;
+    color: var(--accent);
+    background: var(--accent-light);
+    padding: 0.15rem 0.5rem;
+    border-radius: 3px;
+    letter-spacing: 0.03em;
+  }
+
+  .tc-title {
+    font-size: 0.83rem;
+    font-weight: 500;
+    flex: 1;
+  }
+
+  .tc-run-btn {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    padding: 0.2rem 0.6rem;
+    background: var(--accent);
+    color: white;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+    letter-spacing: 0.03em;
+    transition: opacity 0.15s;
+  }
+
+  .tc-run-btn:hover { opacity: 0.85; }
+
+  .tc-body {
+    display: none;
+    padding: 0.75rem 0.9rem;
+    font-size: 0.8rem;
+    color: var(--muted);
+    border-top: 1px solid var(--border);
+    line-height: 1.55;
+  }
+
+  .tc-card.active .tc-body { display: block; }
+
+  .tc-body strong { color: var(--text); font-weight: 500; }
+
+  .tc-result {
+    margin-top: 0.6rem;
+    padding: 0.45rem 0.7rem;
+    border-radius: 4px;
+    font-size: 0.77rem;
+    line-height: 1.4;
+    display: none;
+  }
+
+  .tc-result.show { display: block; }
+  .tc-result.pass { background: var(--success-light); color: var(--success); border: 1px solid #b2d8c2; }
+  .tc-result.fail { background: var(--danger-light); color: var(--danger); border: 1px solid #f0baba; }
+
+  /* boundary value section */
+  .bv-section { margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--border); }
+  .bv-title {
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--muted);
+    margin-bottom: 0.7rem;
+  }
+
+  .bv-table { width: 100%; font-size: 0.77rem; border-collapse: collapse; }
+  .bv-table th {
+    text-align: left;
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--muted);
+    padding: 0.3rem 0.5rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .bv-table td {
+    padding: 0.4rem 0.5rem;
+    border-bottom: 1px solid #f0ece6;
+    color: var(--text);
+    vertical-align: middle;
+  }
+
+  .bv-badge {
+    display: inline-block;
+    font-size: 0.65rem;
+    font-family: var(--font-mono);
+    padding: 0.15rem 0.45rem;
+    border-radius: 3px;
+    letter-spacing: 0.03em;
+  }
+
+  .bv-badge.accept { background: var(--success-light); color: var(--success); }
+  .bv-badge.reject { background: var(--danger-light); color: var(--danger); }
+
+  /* --- Login Card --- */
+  .login-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 2rem 2rem 1.75rem;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.05);
+  }
+
+  .login-brand {
+    text-align: center;
+    margin-bottom: 1.6rem;
+  }
+
+  .login-brand .logo-mark {
+    width: 36px;
+    height: 36px;
+    background: var(--accent);
+    border-radius: 8px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 0.7rem;
+  }
+
+  .login-brand .logo-mark span {
+    color: white;
+    font-family: var(--font-display);
+    font-size: 1.1rem;
+  }
+
+  .login-brand h2 {
+    font-family: var(--font-display);
+    font-size: 1.35rem;
+    font-weight: 400;
+    color: var(--text);
+  }
+
+  .login-brand p {
+    font-size: 0.78rem;
+    color: var(--muted);
+    margin-top: 0.15rem;
+  }
+
+  .form-group { margin-bottom: 1rem; }
+
+  label {
+    display: block;
+    font-size: 0.78rem;
+    font-weight: 500;
+    color: var(--muted);
+    margin-bottom: 0.3rem;
+    letter-spacing: 0.01em;
+  }
+
+  input[type="text"], input[type="password"] {
+    width: 100%;
+    padding: 0.6rem 0.8rem;
+    font-family: var(--font-body);
+    font-size: 0.88rem;
+    background: #fafaf8;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    color: var(--text);
+    outline: none;
+    transition: border-color 0.15s, box-shadow 0.15s;
+  }
+
+  input[type="text"]:focus, input[type="password"]:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(42, 74, 127, 0.1);
+    background: white;
+  }
+
+  input.error {
+    border-color: var(--danger);
+    box-shadow: 0 0 0 3px rgba(192, 57, 43, 0.1);
+  }
+
+  .login-btn {
+    width: 100%;
+    padding: 0.7rem;
+    background: var(--accent);
+    color: white;
+    border: none;
+    border-radius: var(--radius);
+    font-family: var(--font-body);
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    margin-top: 0.5rem;
+    transition: background 0.15s, transform 0.1s;
+    letter-spacing: 0.01em;
+  }
+
+  .login-btn:hover { background: #1e3a6e; }
+  .login-btn:active { transform: scale(0.99); }
+
+  .msg-box {
+    margin-top: 0.9rem;
+    padding: 0.6rem 0.8rem;
+    border-radius: var(--radius);
+    font-size: 0.8rem;
+    line-height: 1.45;
+    display: none;
+  }
+
+  .msg-box.show { display: block; }
+  .msg-box.error { background: var(--danger-light); color: var(--danger); border: 1px solid #f0baba; }
+  .msg-box.success { background: var(--success-light); color: var(--success); border: 1px solid #b2d8c2; }
+  .msg-box.warning { background: var(--warning-light); color: var(--warning); border: 1px solid #e8d49a; }
+
+  .test-indicator {
+    text-align: center;
+    margin-top: 1.2rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--border);
+  }
+
+  .tc-badge {
+    display: inline-block;
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    color: var(--muted);
+    background: #f4f1ec;
+    padding: 0.2rem 0.6rem;
+    border-radius: 20px;
+    border: 1px solid var(--border);
+  }
+
+  .pass-view {
+    display: none;
+    text-align: center;
+    padding: 1rem 0;
+  }
+
+  .pass-view.show { display: block; }
+  .login-form-inner.hide { display: none; }
+
+  .pass-icon {
+    width: 48px;
+    height: 48px;
+    background: var(--success-light);
+    border: 2px solid #b2d8c2;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.4rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .pass-view h3 {
+    font-family: var(--font-display);
+    font-size: 1.1rem;
+    font-weight: 400;
+    color: var(--success);
+    margin-bottom: 0.3rem;
+  }
+
+  .pass-view p {
+    font-size: 0.78rem;
+    color: var(--muted);
+    margin-bottom: 1rem;
+  }
+
+  .reset-btn {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    padding: 0.35rem 0.9rem;
+    background: none;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    cursor: pointer;
+    color: var(--muted);
+    letter-spacing: 0.04em;
+    transition: border-color 0.15s, color 0.15s;
+  }
+
+  .reset-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+  @media (max-width: 700px) {
+    .layout { grid-template-columns: 1fr; }
+    .login-card { order: -1; }
+  }
+</style>
+</head>
+<body>
+
+<div class="page-header">
+  <h1>Login Page – Test Cases</h1>
+  <p>22116278 Oghenewoke Utomudo Omogha</p>
+</div>
+
+<div class="layout">
+
+  <!-- Test Panel -->
+  <div class="test-panel">
+    <div class="test-panel-header">
+      <h2>Test suite</h2>
+      <p>Login Page Validation</p>
+    </div>
+    <div class="test-tabs">
+      <button class="test-tab active" onclick="switchTab('task1', this)">Task 1 – Functional</button>
+      <button class="test-tab" onclick="switchTab('task2', this)">Task 2 – Boundary</button>
+    </div>
+    <div class="test-cases" id="task1-panel">
+
+      <!-- TC_01 -->
+      <div class="tc-card" id="tc01-card" onclick="toggleTC('tc01-card')">
+        <div class="tc-header">
+          <span class="tc-id">TC_01</span>
+          <span class="tc-title">Valid login</span>
+          <button class="tc-run-btn" onclick="event.stopPropagation(); runTC('tc01')">Run ▶</button>
+        </div>
+        <div class="tc-body">
+          <strong>Steps:</strong><br>
+          1. Open login page<br>
+          2. Enter valid username: <code>admin</code><br>
+          3. Enter valid password: <code>secure123</code><br>
+          4. Click Login
+          <div class="tc-result" id="tc01-result"></div>
+        </div>
+      </div>
+
+      <!-- TC_02 -->
+      <div class="tc-card" id="tc02-card" onclick="toggleTC('tc02-card')">
+        <div class="tc-header">
+          <span class="tc-id">TC_02</span>
+          <span class="tc-title">Invalid login</span>
+          <button class="tc-run-btn" onclick="event.stopPropagation(); runTC('tc02')">Run ▶</button>
+        </div>
+        <div class="tc-body">
+          <strong>Steps:</strong><br>
+          1. Open login page<br>
+          2. Enter invalid username: <code>wronguser</code><br>
+          3. Enter invalid password: <code>badpass</code><br>
+          4. Click Login
+          <div class="tc-result" id="tc02-result"></div>
+        </div>
+      </div>
+
+      <!-- TC_03 -->
+      <div class="tc-card" id="tc03-card" onclick="toggleTC('tc03-card')">
+        <div class="tc-header">
+          <span class="tc-id">TC_03</span>
+          <span class="tc-title">Empty fields</span>
+          <button class="tc-run-btn" onclick="event.stopPropagation(); runTC('tc03')">Run ▶</button>
+        </div>
+        <div class="tc-body">
+          <strong>Steps:</strong><br>
+          1. Open login page<br>
+          2. Leave username and password empty<br>
+          3. Click Login
+          <div class="tc-result" id="tc03-result"></div>
+        </div>
+      </div>
+
+      <!-- TC_04 -->
+      <div class="tc-card" id="tc04-card" onclick="toggleTC('tc04-card')">
+        <div class="tc-header">
+          <span class="tc-id">TC_04</span>
+          <span class="tc-title">SQL Injection (basic)</span>
+          <button class="tc-run-btn" onclick="event.stopPropagation(); runTC('tc04')">Run ▶</button>
+        </div>
+        <div class="tc-body">
+          <strong>Steps:</strong><br>
+          1. Open login page<br>
+          2. Enter <code>' OR '1'='1</code> in username<br>
+          3. Enter any password<br>
+          4. Click Login
+          <div class="tc-result" id="tc04-result"></div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="test-cases" id="task2-panel" style="display:none;">
+      <div class="bv-section">
+        <div class="bv-title">Boundary Value Testing – Password Length (8–12 chars)</div>
+        <table class="bv-table">
+          <thead>
+            <tr>
+              <th>Case ID</th>
+              <th>Input</th>
+              <th>Description</th>
+              <th>Expected</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td style="font-family: var(--font-mono); font-size:0.72rem; color: var(--accent);">TC_BV_01</td>
+              <td>7 chars</td>
+              <td style="color: var(--muted);">Below minimum</td>
+              <td><span class="bv-badge reject">Rejected</span></td>
+            </tr>
+            <tr>
+              <td style="font-family: var(--font-mono); font-size:0.72rem; color: var(--accent);">TC_BV_02</td>
+              <td>8 chars</td>
+              <td style="color: var(--muted);">Minimum boundary</td>
+              <td><span class="bv-badge accept">Accepted</span></td>
+            </tr>
+            <tr>
+              <td style="font-family: var(--font-mono); font-size:0.72rem; color: var(--accent);">TC_BV_03</td>
+              <td>12 chars</td>
+              <td style="color: var(--muted);">Maximum boundary</td>
+              <td><span class="bv-badge accept">Accepted</span></td>
+            </tr>
+            <tr>
+              <td style="font-family: var(--font-mono); font-size:0.72rem; color: var(--accent);">TC_BV_04</td>
+              <td>13 chars</td>
+              <td style="color: var(--muted);">Above maximum</td>
+              <td><span class="bv-badge reject">Rejected</span></td>
+            </tr>
+          </tbody>
+        </table>
+        <div style="margin-top: 0.9rem;">
+          <div style="font-family: var(--font-mono); font-size:0.68rem; text-transform:uppercase; letter-spacing:0.08em; color: var(--muted); margin-bottom:0.5rem;">Live boundary test</div>
+          <div style="display:flex; gap:0.5rem; align-items:center;">
+            <input type="text" id="bv-input" placeholder="Type a password…" style="flex:1;" oninput="checkBoundary()">
+          </div>
+          <div id="bv-result" class="msg-box" style="margin-top:0.5rem;"></div>
+          <div id="bv-len" style="font-size:0.72rem; font-family:var(--font-mono); color:var(--muted); margin-top:0.3rem;">Length: 0</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Login Card -->
+  <div class="login-card">
+    <div class="login-brand">
+      <div class="logo-mark"><span>A</span></div>
+      <h2>Welcome back</h2>
+      <p>Sign in to your account</p>
+    </div>
+
+    <div class="login-form-inner" id="login-form-inner">
+      <div class="form-group">
+        <label for="username">Username</label>
+        <input type="text" id="username" placeholder="Enter username">
+      </div>
+      <div class="form-group">
+        <label for="password">Password</label>
+        <input type="password" id="password" placeholder="Enter password">
+      </div>
+      <button class="login-btn" onclick="manualLogin()">Login</button>
+      <div class="msg-box" id="msg-box"></div>
+    </div>
+
+    <div class="pass-view" id="pass-view">
+      <div class="pass-icon">✓</div>
+      <h3>Login successful</h3>
+      <p>Redirecting you to the dashboard…</p>
+      <button class="reset-btn" onclick="resetForm()">← Back to login</button>
+    </div>
+
+    <div class="test-indicator">
+      <span class="tc-badge" id="active-tc-badge">No test running</span>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  const VALID_USER = 'admin';
+  const VALID_PASS = 'secure123';
+  const SQL_PATTERN = /('|--|;|OR\s+['"]?1['"]?\s*=\s*['"]?1|DROP\s+TABLE|SELECT\s+\*)/i;
+
+  function showMsg(type, text) {
+    const box = document.getElementById('msg-box');
+    box.className = 'msg-box show ' + type;
+    box.textContent = text;
+  }
+
+  function clearMsg() {
+    const box = document.getElementById('msg-box');
+    box.className = 'msg-box';
+    box.textContent = '';
+    document.getElementById('username').classList.remove('error');
+    document.getElementById('password').classList.remove('error');
+  }
+
+  function setInputs(u, p) {
+    document.getElementById('username').value = u;
+    document.getElementById('password').value = p;
+    clearMsg();
+    document.getElementById('pass-view').classList.remove('show');
+    document.getElementById('login-form-inner').classList.remove('hide');
+  }
+
+  function resetForm() {
+    setInputs('', '');
+    document.getElementById('active-tc-badge').textContent = 'No test running';
+  }
+
+  function login(username, password) {
+    if (!username && !password) {
+      document.getElementById('username').classList.add('error');
+      document.getElementById('password').classList.add('error');
+      showMsg('error', 'Fields cannot be empty');
+      return 'empty';
+    }
+    if (SQL_PATTERN.test(username) || SQL_PATTERN.test(password)) {
+      document.getElementById('username').classList.add('error');
+      showMsg('warning', 'Invalid input detected. SQL injection attempt blocked.');
+      return 'sqli';
+    }
+    if (username === VALID_USER && password === VALID_PASS) {
+      document.getElementById('login-form-inner').classList.add('hide');
+      document.getElementById('pass-view').classList.add('show');
+      return 'success';
+    }
+    document.getElementById('username').classList.add('error');
+    document.getElementById('password').classList.add('error');
+    showMsg('error', 'Invalid credentials');
+    return 'fail';
+  }
+
+  function manualLogin() {
+    const u = document.getElementById('username').value.trim();
+    const p = document.getElementById('password').value;
+    clearMsg();
+    login(u, p);
+  }
+
+  function showTCResult(id, cls, text) {
+    const el = document.getElementById(id + '-result');
+    el.className = 'tc-result show ' + cls;
+    el.textContent = text;
+  }
+
+  function runTC(id) {
+    clearMsg();
+    document.getElementById('pass-view').classList.remove('show');
+    document.getElementById('login-form-inner').classList.remove('hide');
+    document.getElementById('active-tc-badge').textContent = 'Running: ' + id.toUpperCase().replace('tc', 'TC_0').replace('TC_0c', 'TC_');
+
+    if (id === 'tc01') {
+      setInputs(VALID_USER, VALID_PASS);
+      document.getElementById('active-tc-badge').textContent = 'Running: TC_01';
+      setTimeout(() => {
+        const r = login(VALID_USER, VALID_PASS);
+        showTCResult('tc01', r === 'success' ? 'pass' : 'fail',
+          r === 'success' ? '✓ PASS – User logged in, redirected to dashboard' : '✗ FAIL – Unexpected result');
+      }, 300);
+    }
+
+    if (id === 'tc02') {
+      setInputs('wronguser', 'badpass');
+      document.getElementById('active-tc-badge').textContent = 'Running: TC_02';
+      setTimeout(() => {
+        const r = login('wronguser', 'badpass');
+        showTCResult('tc02', r === 'fail' ? 'pass' : 'fail',
+          r === 'fail' ? '✓ PASS – "Invalid credentials" displayed' : '✗ FAIL – Unexpected result');
+      }, 300);
+    }
+
+    if (id === 'tc03') {
+      setInputs('', '');
+      document.getElementById('active-tc-badge').textContent = 'Running: TC_03';
+      setTimeout(() => {
+        const r = login('', '');
+        showTCResult('tc03', r === 'empty' ? 'pass' : 'fail',
+          r === 'empty' ? '✓ PASS – "Fields cannot be empty" displayed' : '✗ FAIL – Unexpected result');
+      }, 300);
+    }
+
+    if (id === 'tc04') {
+      const sqli = "' OR '1'='1";
+      setInputs(sqli, 'anypass');
+      document.getElementById('active-tc-badge').textContent = 'Running: TC_04';
+      setTimeout(() => {
+        const r = login(sqli, 'anypass');
+        showTCResult('tc04', r === 'sqli' ? 'pass' : 'fail',
+          r === 'sqli' ? '✓ PASS – SQL injection blocked, error shown' : '✗ FAIL – Injection not blocked!');
+      }, 300);
+    }
+  }
+
+  function toggleTC(cardId) {
+    const card = document.getElementById(cardId);
+    card.classList.toggle('active');
+  }
+
+  function switchTab(tab, btn) {
+    document.querySelectorAll('.test-tab').forEach(t => t.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('task1-panel').style.display = tab === 'task1' ? '' : 'none';
+    document.getElementById('task2-panel').style.display = tab === 'task2' ? '' : 'none';
+  }
+
+  function checkBoundary() {
+    const val = document.getElementById('bv-input').value;
+    const len = val.length;
+    document.getElementById('bv-len').textContent = 'Length: ' + len;
+    const box = document.getElementById('bv-result');
+    if (val === '') { box.className = 'msg-box'; return; }
+    if (len < 8) {
+      box.className = 'msg-box show error';
+      box.textContent = 'Rejected – below minimum length (8). Current: ' + len;
+    } else if (len > 12) {
+      box.className = 'msg-box show error';
+      box.textContent = 'Rejected – above maximum length (12). Current: ' + len;
+    } else {
+      box.className = 'msg-box show success';
+      box.textContent = 'Accepted – password length ' + len + ' is within range (8–12).';
+    }
+  }
+</script>
+</body>
+</html>
